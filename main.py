@@ -1,6 +1,7 @@
 import discord
 import os
 import json
+import owoify
 from functions import *
 from discord.ext import commands
 
@@ -23,6 +24,22 @@ for bot_command in os.listdir('cogs'):
 async def ping(ctx):
     await ctx.send('Pong! That took **{}** ms.'.format(round(client.latency, 5) * 1000))
 
+
+@client.command()
+async def owo(ctx, *, text = None):
+    if text is not None:
+        await ctx.send(owoify.owoify(text))
+        
+    else:
+        channel = ctx.channel
+        messages = [message async for message in channel.history(limit=2)]
+        msg = messages[1].content
+        
+        if (msg[:1] + msg[-1:]) == '<>':
+            pass
+        else:   
+            await ctx.send(owoify.owoify(messages[1].content))
+        
 
 @client.command()
 async def helptest(ctx):
