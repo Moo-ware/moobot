@@ -3,7 +3,7 @@ import json
 import requests
 from pytz import timezone
 
-
+eastern = timezone('US/Eastern')
 eLevel = {
   0  : "",
   1  : "PRI",
@@ -16,73 +16,73 @@ eLevel = {
 
 spawnTimes = {
     'Monday' : {
-        '0015' : 'Kutum & Karanda',
-        '0200' : 'Karanda',
-        '0500' : 'Kzarka',
-        '0900' : 'Kzarka',
-        '1200' : 'Offin	',
-        '1600' : 'Kutum	',
-        '1900' : 'Nouver',
-        '2215' : 'Kzarka'
+        '0115' : 'Kutum & Karanda',
+        '0300' : 'Karanda',
+        '0600' : 'Kzarka',
+        '1000' : 'Kzarka',
+        '1300' : 'Offin',
+        '1700' : 'Kutum',
+        '2000' : 'Nouver',
+        '2315' : 'Kzarka'
     },
     'Tuesday' : {
-        '0015' : 'Karanda',
-        '0200' : 'Kutum',
-        '0500' : 'Kzarka',
-        '0900' : 'Nouver',
-        '1200' : 'Kutum',
-        '1600' : 'Nouver',
-        '1900' : 'Karanda',
-        '2215' : 'Garmoth'
+        '0115' : 'Karanda',
+        '0300' : 'Kutum',
+        '0600' : 'Kzarka',
+        '1000' : 'Nouver',
+        '1300' : 'Kutum',
+        '1700' : 'Nouver',
+        '2000' : 'Karanda',
+        '2315' : 'Garmoth'
     },
     'Wednesday' : {
-        '0015' : 'Kutum & Kzarka',
-        '0200' : 'Karanda',
-        '0900' : 'Karanda',
-        '1200' : 'Nouver',
-        '1600' : 'Kutum & Offin',
-        '1900' : 'Vell',
-        '2215' : 'Karanda & Kzarka',
-        '2315' : 'Quint & Muraka'
+        '0115' : 'Kutum & Kzarka',
+        '0300' : 'Karanda',
+        '1000' : 'Karanda',
+        '1300' : 'Nouver',
+        '1700' : 'Kutum & Offin',
+        '2000' : 'Vell',
+        '2315' : 'Karanda & Kzarka',
+        '0015' : 'Quint & Muraka'
     },
     'Thursday' : {
-        '0015' : 'Nouver',
-        '0200' : 'Kutum',
-        '0500' : 'Kzarka',
-        '0900' : 'Kutum',
-        '1200' : 'Nouver',
-        '1600' : 'Kzarka',
-        '1900' : 'Kutum',
-        '2215' : 'Garmoth'
+        '0115' : 'Nouver',
+        '0300' : 'Kutum',
+        '0600' : 'Kzarka',
+        '1000' : 'Kutum',
+        '1300' : 'Nouver',
+        '1700' : 'Kzarka',
+        '2000' : 'Kutum',
+        '2315' : 'Garmoth'
     },
     'Friday' : {
-        '0015' : 'Kzarka & Karanda',
-        '0200' : 'Nouver',
-        '0500' : 'Karanda',
-        '0900' : 'Kutum',
-        '1200' : 'Karanda',
-        '1600' : 'Nouver',
-        '1900' : 'Kzarka',
-        '2215' : 'Kutum & Kzarka'
+        '0115' : 'Kzarka & Karanda',
+        '0300' : 'Nouver',
+        '0600' : 'Karanda',
+        '1000' : 'Kutum',
+        '1300' : 'Karanda',
+        '1700' : 'Nouver',
+        '2000' : 'Kzarka',
+        '2315' : 'Kutum & Kzarka'
     },
     'Saturday' : {
-        '0015' : 'Karanda',
-        '0200' : 'Offin',
-        '0500' : 'Nouver',
-        '0900' : 'Kutum',
-        '1200' : 'Nouver',
-        '1600' : 'Quint & Muraka',
-        '1900' : 'Kzarka & Karanda'
+        '0115' : 'Karanda',
+        '0300' : 'Offin',
+        '0600' : 'Nouver',
+        '1000' : 'Kutum',
+        '1300' : 'Nouver',
+        '1700' : 'Quint & Muraka',
+        '2000' : 'Kzarka & Karanda'
     },
     'Sunday' : {
-        '0015' : 'Nouver & Kutum',
-        '0200' : 'Kzarka',
-        '0500' : 'Kutum',
-        '0900' : 'Nouver',
-        '1200' : 'Kzarka',
-        '1600' : 'Vell',
-        '1900' : 'Garmoth',
-        '2215' : 'Kzarka & Nouver'
+        '0115' : 'Nouver & Kutum',
+        '0300' : 'Kzarka',
+        '0600' : 'Kutum',
+        '1000' : 'Nouver',
+        '1300' : 'Kzarka',
+        '1700' : 'Vell',
+        '2000' : 'Garmoth',
+        '2315' : 'Kzarka & Nouver'
     },
 }
 
@@ -91,7 +91,6 @@ dayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
 
 def spawnFromNow():
     spawnList = []
-    eastern = timezone('US/Eastern')
     day = datetime.datetime.now(eastern).strftime('%H%M-%A').split('-')
     for i in spawnTimes[day[1]]:
         if int(noOctal(i)) > int(noOctal(day[0])):
@@ -116,9 +115,6 @@ def spawnFromNow():
     else:
         return spawnList
   
-def specialSpawns():
-    specialSpawnList = []
-
 
 def GetWaitlist():
     url = 'https://na-trade.naeu.playblackdesert.com/Home/GetWorldMarketWaitList'
@@ -160,3 +156,77 @@ def noOctal(num):
             continue  
         return (num[x:])
     return 0
+
+
+def findNextBoss(boss):
+    for i in range(2): # Running the loop 2 times so it can iterate through the dictionary twice
+        for day in spawnTimes:
+            currentDayVal = dayOfWeek.index(datetime.datetime.now(eastern).strftime('%A'))
+            # Only iterate through the whole dictionary on the second loop (i == 1)
+            if i == 0:
+                if currentDayVal > dayOfWeek.index(day):
+                    continue
+            # Finding the day and time of next spawn
+            for j in spawnTimes[day]:
+                if currentDayVal == dayOfWeek.index(day):
+                    currentTimeVal = datetime.datetime.now(eastern).strftime('%H%M')
+                    if int(noOctal(currentTimeVal)) > int(noOctal(j)):
+                        continue
+                # See if string is 'something & something'
+                if spawnTimes[day][j].find('&') != -1:
+                    split = spawnTimes[day][j].split(' & ')
+                    for i in split:
+                        if i == boss.capitalize():
+                            return [day, j]
+                if spawnTimes[day][j] == boss.capitalize():
+                    return [day, j]
+
+
+# Time will be a string of format e.g. ['Monday', '0000']
+def timeFromNow(timeDay):
+    timeNow = datetime.datetime.now(eastern).strftime('%H%M')
+    currentDayVal = dayOfWeek.index(datetime.datetime.now(eastern).strftime('%A'))
+    # Finding days until timeDay
+    if currentDayVal <= dayOfWeek.index(timeDay[0]):
+        dayElapsed = dayOfWeek.index(timeDay[0]) - currentDayVal
+    else:
+        dayElapsed = (dayOfWeek.index(timeDay[0]) + 7) - currentDayVal
+
+    # Finding hours and minutes until timeDay
+    timeElapsed = [int(noOctal(timeDay[1][0:2])) - int(noOctal(timeNow[0:2])), int(noOctal(timeDay[1][2:])) - int(noOctal(timeNow[2:]))]
+    timefromnow = str(datetime.timedelta(minutes=(timeElapsed[0] * 60 + timeElapsed[1] - 1)))[:-3]
+
+    if timefromnow.find('day') != -1:
+        if (dayElapsed - 1) == 0:
+            result = 'In {} hr and {} min'.format(timefromnow[8:-3], timefromnow[-2:])
+            return result
+        else:
+            result = 'In {} day {} hr and {} min'.format(dayElapsed - 1, timefromnow[8:-3], timefromnow[-2:])
+            return result
+    else:
+        if dayElapsed == 0:
+            result = 'In {} hr and {} min'.format(timefromnow[:-3], timefromnow[-2:])
+            return result
+        else:    
+            result = 'In {} day {} hr and {} min'.format(dayElapsed, timefromnow[:-3], timefromnow[-2:])
+            return result
+    
+
+def getBossIcon(b):
+    
+    if b == 'Gar':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330722239741962/garm.png'
+    if b == 'Kza':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330747191656530/Kzarka-modified.png'
+    if b == 'Nou':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330770503610540/nouver-modified.png'
+    if b == 'Kut':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079329162596188220/Kutum-modified.png'
+    if b == 'Kar':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079331502229311598/karan.png'
+    if b == 'Off':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330783040393226/Offin-modified.png'
+    if b == 'Vel':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330798911619133/Vell-modified.png'
+    if b == 'Qui':
+        return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330760189812857/Muraka-modified.png'

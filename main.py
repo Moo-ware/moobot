@@ -82,42 +82,58 @@ async def queue(ctx, region='na'):
 
 
 @client.command()
-async def boss(ctx):
-    spawn = spawnFromNow()
-    del spawn[4:]
+async def boss(ctx, boss=None):
+    if boss is None:
+        spawn = spawnFromNow()
+        del spawn[4:]
 
-    description = ''
-    for i in spawn:
-        if len(i) == 2:
-            if i[0] == 'SPAWNED':
-                newstring = '{0:25}{1}\n'.format(i[1], i[0])
-                description = description + newstring
-    
-            elif int(i[0][:-3]) == 1:
-                timestr = 'In {} hour and {} minutes'.format(i[0][:-3], i[0][-2:])
-                newstring = '{0:25}{1}\n'.format(i[1], timestr)
-                description = description + newstring
+        description = ''
+        for i in spawn:
+            if len(i) == 2:
+                if i[0] == 'SPAWNED':
+                    newstring = '{0:25}{1}\n'.format(i[1], i[0])
+                    description = description + newstring
+        
+                elif int(i[0][:-3]) == 1:
+                    timestr = 'In {} hr and {} min'.format(i[0][:-3], i[0][-2:])
+                    newstring = '{0:25}{1}\n'.format(i[1], timestr)
+                    description = description + newstring
+                else:
+                    timestr = 'In {} hr and {} min'.format(i[0][:-3], i[0][-2:])
+                    newstring = '{0:25}{1}\n'.format(i[1], timestr)
+                    description = description + newstring
+                
+            # len(i) == 3 means the times are from the next day
+            elif len(i) == 3:
+                if int(i[0][8:-3]) == 1:
+                    timestr = 'In {} hr and {} min'.format(i[0][8:-3], i[0][-2:])
+                    newstring = '{0:25}{1}\n'.format(i[1], timestr)
+                    description = description + newstring
+                else:
+                    timestr = 'In {} hr and {} min'.format(i[0][8:-3], i[0][-2:])
+                    newstring = '{0:25}{1}\n'.format(i[1], timestr)
+                    description = description + newstring
+                
             else:
-                timestr = 'In {} hours and {} minutes'.format(i[0][:-3], i[0][-2:])
-                newstring = '{0:25}{1}\n'.format(i[1], timestr)
-                description = description + newstring
-            
-        elif len(i) == 3:
-            if int(i[0][8:-3]) == 1:
-                timestr = 'In {} hour and {} minutes'.format(i[0][8:-3], i[0][-2:])
-                newstring = '{0:25}{1}\n'.format(i[1], timestr)
-                description = description + newstring
-            else:
-                timestr = 'In {} hours and {} minutes'.format(i[0][8:-3], i[0][-2:])
-                newstring = '{0:25}{1}\n'.format(i[1], timestr)
-                description = description + newstring
-            
+                print('Error')
+        
+        embed=discord.Embed(title="Upcoming Bosses:", description='```diff\n-{}\n```'.format(description), color=0xfe9a9a)
+        embed.add_field(name="❗Important  Spawns :", 
+                        value="```ansi\n\u001b[1;31mGarmoth      {}\u001b[0m```\n```yaml\nVell         {}```".format(timeFromNow(findNextBoss('Garmoth')),timeFromNow(findNextBoss('Vell'))), 
+                        inline=False)
+        embed.set_author(name="BDO Boss Timer", icon_url="https://cdn.discordapp.com/attachments/629036668531507222/1079318649325756498/78796e7f-eaa1-4f7e-abb6-099499a807ea.png")
+        embed.set_thumbnail(url= getBossIcon(description[0:3]))
+
+        await ctx.send(embed=embed)
+    else:
+        result = findNextBoss(boss.capitalize())
+        if result is None:
+            await ctx.send('Please enter a valid name')
         else:
-            print('Error')
-    
-    embed=discord.Embed(title="BDO Boss Timer:", description='```diff\n-{}\n```'.format(description), color=0xfe9a9a)
-    await ctx.send(embed=embed)
-
+            embed=discord.Embed(title="Next {} Spawn:".format(boss.capitalize()), description='**{}\n**'.format(timeFromNow(result)), color=0xfe9a9a)
+            embed.set_image(url= getBossIcon(boss.capitalize()[0:3]))
+            await ctx.send(embed=embed)
+        
 
 # Gets bot token from apikey.json file
 f = open('apikey.json')
