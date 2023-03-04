@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands, tasks
-from functions import *
-from fuzzywuzzy import fuzz
-
+from utils.functions import *
+from utils.marketwatcher import mpwatcher
 
 class BDOInfo(commands.Cog):
     def __init__(self, bot):
@@ -10,7 +9,7 @@ class BDOInfo(commands.Cog):
 
     @commands.command(name = 'queue', aliases = ['q'])
     async def queue(self, ctx):
-        waitList = marketwatcher.queue
+        waitList = mpwatcher.queue
         embed=discord.Embed(title="In Registrations Queue:", url="https://na-trade.naeu.playblackdesert.com/Home/list/wait", color=0xfe9a9a)
         embed.set_author(name="Central Market [NA]")
         if len(waitList["_waitList"]) != 0:

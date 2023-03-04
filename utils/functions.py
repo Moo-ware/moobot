@@ -1,9 +1,7 @@
 import datetime
 import json
 import requests
-import time
 from pytz import timezone
-from threading import Thread
 import csv
 from fuzzywuzzy import fuzz
 
@@ -97,16 +95,6 @@ with open('itemID.csv') as itemid:
         
     for row in reader:
         data.append(row)
-
-
-class marketwatch():
-    def __init__(self):
-        self.queue = {}
-    
-    def queueWatcher(self):
-        while True:
-            self.queue = GetWaitlist()
-            time.sleep(25)
 
 
 def spawnFromNow():
@@ -247,5 +235,3 @@ def findItems(item):
     return found_list
 
 
-marketwatcher = marketwatch()
-Thread(target=marketwatcher.queueWatcher).start()
