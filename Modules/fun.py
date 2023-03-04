@@ -3,6 +3,7 @@ import openai
 import owoify
 import json
 from discord.ext import commands
+from discord import app_commands
 
 f = open('apikey.json')
 data = json.load(f)
@@ -32,7 +33,7 @@ class fun(commands.Cog):
     async def askgpt(self, ctx, temp, *, body = None):
         if body is not None:
             openai.api_key = f"{openaikey}"
-            response = openai.Completion.create(
+            response = await openai.Completion.acreate(
                 model="text-davinci-003", 
                 prompt="{}".format(body), 
                 temperature= float(temp), 
@@ -43,6 +44,12 @@ class fun(commands.Cog):
             await ctx.send('```\n{}```'.format(responseFormat))
         else:
             await ctx.send('Please provide information')
+
+    
+    # Slash Commands
+
+
+
 
 
 async def setup(bot):

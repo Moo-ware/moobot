@@ -1,12 +1,10 @@
 import discord
 import os
 import json
-from functions import *
 from discord.ext import commands
 
 
 intents = discord.Intents.all()
-
 client = commands.Bot(command_prefix = ".", intents=intents)
 
 @client.event
@@ -23,6 +21,11 @@ async def on_ready():
                 if command[-3:] == '.py':
                     name = f'Modules.{bot_command}.' + command[:-3]
                     await client.load_extension(name)
+    
+    
+@client.tree.command(name='avatar', description='Gets a users avatar', guild=discord.Object(id=561610616360534044))
+async def avatar(interaction: discord.Interaction, first: discord.Member):
+    await interaction.response.send_message(first.avatar)
 
 
 # Gets bot token from apikey.json file

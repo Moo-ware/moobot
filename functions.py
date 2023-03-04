@@ -1,7 +1,11 @@
 import datetime
 import json
 import requests
+import time
 from pytz import timezone
+from threading import Thread
+import csv
+from fuzzywuzzy import fuzz
 
 eastern = timezone('US/Eastern')
 eLevel = {
@@ -87,6 +91,22 @@ spawnTimes = {
 }
 
 dayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+data = []
+with open('itemID.csv') as itemid:
+    reader = csv.reader(itemid)
+        
+    for row in reader:
+        data.append(row)
+
+
+class marketwatch():
+    def __init__(self):
+        self.queue = {}
+    
+    def queueWatcher(self):
+        while True:
+            self.queue = GetWaitlist()
+            time.sleep(25)
 
 
 def spawnFromNow():
@@ -129,18 +149,6 @@ def GetWaitlist():
     x = json.loads(response.text)
     return x
 
-def GetWaitlistEU():
-    url = 'https://eu-trade.naeu.playblackdesert.com/Home/GetWorldMarketWaitList'
-    headers = {
-    "Content-Type": "application/json",
-    "User-Agent": "BlackDesert"
-    }
-    payload = {}
-
-    response = requests.request('POST', url, json=payload, headers=headers)
-    
-    x = json.loads(response.text)
-    return x
 
 def matchEnhancement(key):
     return eLevel.get(key)
@@ -230,3 +238,14 @@ def getBossIcon(b):
         return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330798911619133/Vell-modified.png'
     if b == 'Qui':
         return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330760189812857/Muraka-modified.png'
+
+def findItems(item):
+    found_list = []
+    for names in data:
+        if fuzz.partial_ratio(item.capitalize(), names[0]) >= 85:
+            found_list.append(names)
+    return found_list
+
+
+marketwatcher = marketwatch()
+Thread(target=marketwatcher.queueWatcher).start()

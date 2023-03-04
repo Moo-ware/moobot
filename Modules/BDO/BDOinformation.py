@@ -1,39 +1,27 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from functions import *
+from fuzzywuzzy import fuzz
+
 
 class BDOInfo(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot = bot 
 
     @commands.command(name = 'queue', aliases = ['q'])
-    async def queue(self, ctx, region='na'):
-        if region.lower() == 'eu':        
-            waitList = GetWaitlistEU()
-            embed=discord.Embed(title="In Registrations Queue:", url="https://eu-trade.naeu.playblackdesert.com/Home/list/wait", color=0xfe9a9a)
-            embed.set_author(name="Central Market [EU]")
-            if len(waitList["_waitList"]) != 0:
-                for i in waitList["_waitList"]:
-                    embed.add_field(name="{}: {}".format(matchEnhancement(i['chooseKey']), i['name']), 
-                    value="{:,}  ```ansi\n \u001b[0;47m\u001b[1;35m    In {} min    \u001b[0m```".format(i['_pricePerOne'], timeCalc(i['_waitEndTime'])), inline=True)
-            else:
-                embed.add_field(name="", value="```ansi\n \u001b[0;47m\u001b[1;35m    Nothing is in Queue    \u001b[0m```", inline=False)
-            
-            embed.set_footer(text=datetime.datetime.now())
-            await ctx.send(embed=embed)
+    async def queue(self, ctx):
+        waitList = marketwatcher.queue
+        embed=discord.Embed(title="In Registrations Queue:", url="https://na-trade.naeu.playblackdesert.com/Home/list/wait", color=0xfe9a9a)
+        embed.set_author(name="Central Market [NA]")
+        if len(waitList["_waitList"]) != 0:
+            for i in waitList["_waitList"]:
+                embed.add_field(name="{}: {}".format(matchEnhancement(i['chooseKey']), i['name']), 
+                value="{:,}  ```ansi\n \u001b[0;47m\u001b[1;35m    In {} min    \u001b[0m```".format(i['_pricePerOne'], timeCalc(i['_waitEndTime'])), inline=True)
         else:
-            waitList = GetWaitlist()
-            embed=discord.Embed(title="In Registrations Queue:", url="https://na-trade.naeu.playblackdesert.com/Home/list/wait", color=0xfe9a9a)
-            embed.set_author(name="Central Market [NA]")
-            if len(waitList["_waitList"]) != 0:
-                for i in waitList["_waitList"]:
-                    embed.add_field(name="{}: {}".format(matchEnhancement(i['chooseKey']), i['name']), 
-                    value="{:,}  ```ansi\n \u001b[0;47m\u001b[1;35m    In {} min    \u001b[0m```".format(i['_pricePerOne'], timeCalc(i['_waitEndTime'])), inline=True)
-            else:
-                embed.add_field(name="", value="```ansi\n \u001b[0;47m\u001b[1;35m    Nothing is in Queue    \u001b[0m```", inline=False)
+            embed.add_field(name="", value="```ansi\n \u001b[0;47m\u001b[1;35m    Nothing is in Queue    \u001b[0m```", inline=False)
             
-            embed.set_footer(text=datetime.datetime.now())
-            await ctx.send(embed=embed)
+        embed.set_footer(text=datetime.datetime.now())
+        await ctx.send(embed=embed)
     
 
     @commands.command(name = 'boss', aliases=['next'])
@@ -88,6 +76,12 @@ class BDOInfo(commands.Cog):
                 embed=discord.Embed(title="Next {} Spawn:".format(boss.capitalize()), description='**{}\n**'.format(timeFromNow(result)), color=0xfe9a9a)
                 embed.set_image(url= getBossIcon(boss.capitalize()[0:3]))
                 await ctx.send(embed=embed)
+
+    @commands.command(name='find')
+    async def find(self, ctx, *, item):
+        list_of_match = findItems(item)
+        await ctx.send(list_of_match)
+            
 
 async def setup(bot):
     await bot.add_cog(BDOInfo(bot))

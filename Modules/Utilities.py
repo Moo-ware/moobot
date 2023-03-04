@@ -27,7 +27,11 @@ class Utilities(commands.Cog):
         else:
             await ctx.send('Please mention a user.')
     
-
+    @commands.command(name='sync')
+    async def sync(self, ctx):
+        guild = ctx.guild.id
+        count = await ctx.bot.tree.sync(guild=discord.Object(id=guild))
+        await ctx.send(f'{len(count)} commands synced to {ctx.guild.name}')
 
 async def setup(bot):
     await bot.add_cog(Utilities(bot))
