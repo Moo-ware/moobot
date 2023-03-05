@@ -29,7 +29,7 @@ async def avatar(interaction: discord.Interaction, first: discord.Member):
 
 
 # Gets bot token from apikey.json file
-f = open('apikey.json')
+f = open('resources/apikey.json')
 data = json.load(f)
 bot_token = data.get('token')
 

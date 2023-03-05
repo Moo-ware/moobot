@@ -5,7 +5,7 @@ import json
 from discord.ext import commands
 from discord import app_commands
 
-f = open('apikey.json')
+f = open('resources/apikey.json')
 data = json.load(f)
 openaikey = data.get('openaitoken')
 

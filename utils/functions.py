@@ -90,7 +90,7 @@ spawnTimes = {
 
 dayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 data = []
-with open('itemID.csv') as itemid:
+with open('resources/itemID.csv') as itemid:
     reader = csv.reader(itemid)
         
     for row in reader:
