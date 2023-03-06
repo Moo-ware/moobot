@@ -23,11 +23,6 @@ async def on_ready():
                     await client.load_extension(name)
     
     
-@client.tree.command(name='avatar', description='Gets a users avatar', guild=discord.Object(id=561610616360534044))
-async def avatar(interaction: discord.Interaction, first: discord.Member):
-    await interaction.response.send_message(first.avatar)
-
-
 # Gets bot token from apikey.json file
 f = open('resources/apikey.json')
 data = json.load(f)

@@ -11,7 +11,7 @@ class marketalert(commands.Cog):
     @app_commands.command(name='alert', description='Brings up my alert menu') # Create a slash command
     async def alertmenu(self, interaction: discord.Interaction):
         view=AlertMenu()
-        await interaction.response.send_message("This is a button!", view=view) # Send a message with our View class that contains the button
+        await interaction.response.send_message(embed=alertMenuEmbed(interaction.user), view=view) # Send a message with our View class that contains the button
         view.message = await interaction.original_response() # Sets the current message as view.message
 
 
