@@ -23,10 +23,10 @@ class itemModal(discord.ui.Modal, title="Test test test test"):
             for i in list:
                 menuoptions.add_option(label=f'{i[0]}')
                 string = string + f'[{list.index(i)}]{i[0]}\n'
-                
+            
             await interaction.response.send_message(f'{string}', view=SelectView(menuoptions))
         elif len(list) == 1:
-            pass
+            await interaction.response.send_message(f'{list[0][0]}')
         else:
             await interaction.response.send_message(f'No item or the list of possible items found with the name `{self.itemName}` is too long. Try to be more specific or check for typo')
 
@@ -66,7 +66,7 @@ class Select(discord.ui.Select):
         super().__init__(placeholder="Select an option",max_values=1,min_values=1,options=options)
     
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.edit_message(content=f'{self.values[0]}', view=None)
+        await interaction.response.edit_message(content=f'{self.values[0]}')
 
 class SelectView(discord.ui.View):
     def __init__(self, menuoptions):
