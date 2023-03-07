@@ -16,4 +16,4 @@ class marketalert(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(marketalert(bot), guild=discord.Object(id=1008234755638173776))
+    await bot.add_cog(marketalert(bot), guild=discord.Object(id=561610616360534044))
