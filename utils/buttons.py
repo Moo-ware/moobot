@@ -55,7 +55,9 @@ class itemModal(discord.ui.Modal, title="Test test test test"):
                 menuoptions.add_option(label=f'{i[0]}')
                 string = string + f'[{list.index(i)}]{i[0]}\n'
             
-            await interaction.response.send_message(f'{string}', view=SelectView(menuoptions))
+            await interaction.response.send_message(embed=discord.Embed(title=f'Found a list of possible items related to `{self.itemName}`',
+                                                                  description = f'{string}',
+                                                                  color=0xfe9a9a), view=SelectView(menuoptions))
         elif len(list) == 1:
             await interaction.response.send_message(f'{list[0][0]}', view=Confirmation(interaction.user, self.message, self.button, self.view))
         else:
@@ -67,9 +69,12 @@ class Select(discord.ui.Select):
     def __init__(self):
         options=[]
         super().__init__(placeholder="Select an option",max_values=1,min_values=1,options=options)
-    
+
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.edit_message(content=f'{self.values[0]}')
+        embed = discord.Embed(title='Creating queue alert for:',
+                                description=f'`{self.values[0]}`',
+                                color=0xfe9a9a)
+        await interaction.response.edit_message(embed=embed, view=ConfirmationMulti(interaction.user, embed))
 
 class SelectView(discord.ui.View):
     def __init__(self, menuoptions):
@@ -104,50 +109,32 @@ class Confirmation(discord.ui.View):
         await interaction.response.send_modal(itemModal(self.message, self.button, self.view))
 
 
-# Pagination Menu for after you selected an item from drop down
-class ConfirmationPages(discord.ui.View, menus.MenuPages):
-    def __init__(self, source):
-        super().__init__(timeout=60)
-        self._source = source
-        self.current_page = 0
-        self.ctx = None
-        self.message = None
-
-    async def start(self, ctx, *, channel=None, wait=False):
-        # We wont be using wait/channel, you can implement them yourself. This is to match the MenuPages signature.
-        await self._source._prepare_once()
-        self.ctx = ctx
-        self.message = await self.send_initial_message(ctx, ctx.channel)
-
-    async def _get_kwargs_from_page(self, page):
-        # This method calls ListPageSource.format_page class
-        value = await super()._get_kwargs_from_page(page)
-        if 'view' not in value:
-            value.update({'view': self})
-        return value
+# Confirmation Menu for if multiple items are matched
+class ConfirmationMulti(discord.ui.View):
+    def __init__(self, author, embed):
+        super().__init__()
+        self.author = author
+        self.embed = embed
 
     async def interaction_check(self, interaction):
         # Only allow the author that invoke the command to be able to use the interaction
-        return interaction.user == self.ctx.author
-
+        return interaction.user == self.author
     
-    @discord.ui.button(emoji='Confirm', style=discord.ButtonStyle.green)
-    async def before_page(self, interaction, button):
-        await self.show_checked_page(self.current_page - 1)
-
-    @discord.ui.button(emoji='Go Back', style=discord.ButtonStyle.red)
-    async def next_page(self, interaction, button):
-        await self.show_checked_page(self.current_page + 1)
-        await interaction.response.defer()
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green) 
+    async def confirm_button_callback(self, interaction: discord.Interaction, button):
+        await interaction.response.defer() # Send a message when the button is clicked
     
-    @discord.ui.button(emoji='😄', style=discord.ButtonStyle.blurple)
-    async def stop_page(self, interaction, button):
+    @discord.ui.button(label="Go back", style=discord.ButtonStyle.red) # Create a button with the label "Close" with color red
+    async def before_button_callback(self, interaction: discord.Interaction, button):
         self.stop()
-    
 
-class MySource2(menus.ListPageSource):
-    async def format_page(self, menu, entries):
-        return entries
+        # Going back to Select View
+        await interaction.response.edit_message(embed=self.embed)
+        
+    @discord.ui.button(label='Exit', style=discord.ButtonStyle.blurple) # Exit button
+    async def exit_callback(self, interaction: discord.Interaction, button):
+        self.stop()
+        await interaction.message.delete()
 
 
 
