@@ -70,16 +70,19 @@ class Select(discord.ui.Select):
         options=[]
         super().__init__(placeholder="Select an option",max_values=1,min_values=1,options=options)
 
-    async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title='Creating queue alert for:',
-                                description=f'`{self.values[0]}`',
-                                color=0xfe9a9a)
-        await interaction.response.edit_message(embed=embed, view=ConfirmationMulti(interaction.user, embed))
 
 class SelectView(discord.ui.View):
     def __init__(self, menuoptions):
         super().__init__(timeout=60)
         self.add_item(menuoptions)
+    
+    @discord.ui.select()
+    async def callback(self, interaction: discord.Interaction):
+        embed = discord.Embed(title='Creating queue alert for:',
+                                description=f'`{self.values[0]}`',
+                                color=0xfe9a9a)
+        await interaction.response.edit_message(embed=embed, view=ConfirmationMulti(interaction.user, self))
+    
 
 # Confirmation page if only 1 item is matched
 class Confirmation(discord.ui.View):
@@ -111,10 +114,10 @@ class Confirmation(discord.ui.View):
 
 # Confirmation Menu for if multiple items are matched
 class ConfirmationMulti(discord.ui.View):
-    def __init__(self, author, embed):
+    def __init__(self, author, options):
         super().__init__()
         self.author = author
-        self.embed = embed
+        self.options = options
 
     async def interaction_check(self, interaction):
         # Only allow the author that invoke the command to be able to use the interaction
@@ -124,12 +127,11 @@ class ConfirmationMulti(discord.ui.View):
     async def confirm_button_callback(self, interaction: discord.Interaction, button):
         await interaction.response.defer() # Send a message when the button is clicked
     
-    @discord.ui.button(label="Go back", style=discord.ButtonStyle.red) # Create a button with the label "Close" with color red
+    @discord.ui.button(label="Re-Select", style=discord.ButtonStyle.red) # Create a button with the label "Close" with color red
     async def before_button_callback(self, interaction: discord.Interaction, button):
         self.stop()
-
         # Going back to Select View
-        await interaction.response.edit_message(embed=self.embed)
+        await interaction.response.edit_message(view=SelectView(self.options))
         
     @discord.ui.button(label='Exit', style=discord.ButtonStyle.blurple) # Exit button
     async def exit_callback(self, interaction: discord.Interaction, button):
