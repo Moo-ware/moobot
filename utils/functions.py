@@ -209,7 +209,6 @@ def timeFromNow(timeDay):
     
 
 def getBossIcon(b):
-    
     if b == 'Gar':
         return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330722239741962/garm.png'
     if b == 'Kza':

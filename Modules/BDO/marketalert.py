@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import sqlite3
 from discord import app_commands
 from discord.ext import tasks, commands
 from utils.functions import findItems
@@ -24,6 +25,40 @@ async def setup(bot):
     await bot.add_cog(marketalert(bot), guild=discord.Object(id=561610616360534044))
 
 
+class UserDB():
+    async def get_user_from_db(self, userid):
+        connection = sqlite3.connect("resources/alerts.db")
+        cursor = connection.cursor()
+        rows = cursor.execute(f"SELECT AlertList.item_id, AlertList.enhancement_level, AlertList.price, items.item_name, AlertTypes.alert_type\
+                              FROM AlertList\
+                              INNER JOIN items ON items.item_id = AlertList.item_id\
+                              INNER JOIN AlertTypes ON AlertTypes.alert_id = AlertList.alert_id\
+                              WHERE user_id = {userid}").fetchall()
+        cursor.close()
+        connection.close()
+        return rows
+
+    async def save_user_to_db(self, statement):
+        connection = sqlite3.connect("resources/alerts.db")
+        cursor = connection.cursor()
+        cursor.execute(statement)
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+
+class User():
+    def __init__(self, userid):
+        self.userid = userid
+        self._db = UserDB() 
+
+    async def get_user(self):
+        await self._db.get_user_from_db(self.userid)
+    
+    async def save_user(self, itemid, elevel, price, alert_id):
+        await self._db.save_user_to_db(f"INSERT INTO AlertList VALUES ({self.userid}, {itemid}, {elevel}, {price}, {alert_id})")
+
+
 """Below are the Buttons necessary for UI"""
 # Made thse global variables because it is used by all classes below
 _alertMenuID = None
@@ -33,7 +68,7 @@ _alertMenuView = None
 # Main Alert Menu
 class AlertMenu(discord.ui.View): 
     def __init__(self, author):
-        super().__init__(timeout=180) # Timeout after this long
+        super().__init__(timeout=5) # Timeout after this long
         self.author = author
         
     async def on_timeout(self):
@@ -63,6 +98,16 @@ class itemModal(discord.ui.Modal, title="Test test test test"):
     itemGrade = discord.ui.TextInput(label='Enter the level of the item (e.g. Base, Pen)')
     itemName = discord.ui.TextInput(label= 'Enter the name of the Item')
     
+    # Creating the select menu (Might move to another Class later just for more organization)
+    async def create_select_menu(self, list):
+        menuoptions = Select()
+        string = ''
+        # Adding matching fields to Select menu
+        for i in list:
+            menuoptions.add_option(label=f'{i[0]}', value=f'{i[0]}-{i[1]}')
+            string = string + f'[{list.index(i)}] {i[0]}\n'
+        return menuoptions, string
+    
     async def on_submit(self, interaction: discord.Interaction):
         # Disables the 'Create a Queue Alert' Button on Modal submit
         _alertMenuButton.disabled = True
@@ -70,20 +115,18 @@ class itemModal(discord.ui.Modal, title="Test test test test"):
 
         # Match input itemName from model to a BDO Item Name
         list = findItems(str(self.itemName))
+        
+        # Making sure list stays within Discord limits
         if len(list) > 1 and len(list) < 25:
-            menuoptions = Select()
-            string = ''
-            for i in list:
-                menuoptions.add_option(label=f'{i[0]}', value=f'{i[0]}-{i[1]}')
-                string = string + f'[{list.index(i)}] {i[0]}\n'
-            
+            menuoptions, string = await self.create_select_menu(list)
             await interaction.response.send_message(embed=discord.Embed(title=f'Found a list of possible items related to `{self.itemName}`',
                                                                   description = f'{string}',
                                                                   color=0xfe9a9a).add_field(name='Please select the corret item below:', value=''), 
                                                                   view=SelectView(menuoptions))
+        # If returned items only has one match
         elif len(list) == 1:
             await interaction.response.send_message(embed = discord.Embed(title='Creating queue alert for:',
-                                description=f'`{list[0][0]}`',
+                                description=f'`{str(self.itemGrade).upper()}:{list[0][0]}`',
                                 color=0xfe9a9a).set_thumbnail(url=f'https://cdn.arsha.io/icons/{list[0][1]}.png'), view=Confirmation(interaction.user))
         else:
             await interaction.response.send_message(embed=discord.Embed(title=f'No item or the list of possible items found with the name `{self.itemName}` is too long. Try to be more specific or check for typo', 
@@ -117,7 +160,7 @@ class SelectView(discord.ui.View):
 # Confirmation page if only 1 item is matched
 class Confirmation(discord.ui.View):
     def __init__(self, author):
-        super().__init__()
+        super().__init__(timeout=30)
         self.author = author
 
     async def interaction_check(self, interaction):
@@ -142,9 +185,10 @@ class Confirmation(discord.ui.View):
 # Confirmation Menu for if multiple items are matched
 class ConfirmationMulti(discord.ui.View):
     def __init__(self, author, options):
-        super().__init__()
+        super().__init__(timeout=30)
         self.author = author
         self.options = options
+
     async def interaction_check(self, interaction):
         # Only allow the author that invoke the command to be able to use the interaction
         return interaction.user == self.author
