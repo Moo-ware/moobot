@@ -58,6 +58,23 @@ class User():
     async def save_user(self, itemid, elevel, price, alert_id):
         await self._db.save_user_to_db(f"INSERT INTO AlertList VALUES ({self.userid}, {itemid}, {elevel}, {price}, {alert_id})")
 
+class database():
+    async def get_enhancement_level(self, name):
+        connection = sqlite3.connect("resources/alerts.db")
+        cursor = connection.cursor()
+        level = cursor.execute(f"SELECT e_level FROM Enhancement WHERE e_name = '{name}'").fetchall()
+        cursor.close()
+        connection.close()
+        return level
+
+    async def get_items_from_level(self, e_level):
+        connection = sqlite3.connect("resources/alerts.db")
+        cursor = connection.cursor()
+        rows = cursor.execute(f"SELECT item_id, item_name FROM QueueItems WHERE e_level = {e_level} OR e_level={e_level + 15}").fetchall()
+        cursor.close()
+        connection.close()
+        return rows
+    
 
 """Below are the Buttons necessary for UI"""
 # Made thse global variables because it is used by all classes below
@@ -68,7 +85,7 @@ _alertMenuView = None
 # Main Alert Menu
 class AlertMenu(discord.ui.View): 
     def __init__(self, author):
-        super().__init__(timeout=5) # Timeout after this long
+        super().__init__(timeout=180) # Timeout after this long
         self.author = author
         
     async def on_timeout(self):
@@ -104,17 +121,27 @@ class itemModal(discord.ui.Modal, title="Test test test test"):
         string = ''
         # Adding matching fields to Select menu
         for i in list:
-            menuoptions.add_option(label=f'{i[0]}', value=f'{i[0]}-{i[1]}')
-            string = string + f'[{list.index(i)}] {i[0]}\n'
+            menuoptions.add_option(label=f'{i[1]}', value=f'{i[1]}-{i[0]}')
+            string = string + f'[{list.index(i)}] {i[1]}\n'
         return menuoptions, string
     
     async def on_submit(self, interaction: discord.Interaction):
+        e_level = await database().get_enhancement_level(str(self.itemGrade).upper()) # Get integer e_level from string
+
+        if len(e_level) == 0:
+            await interaction.response.send_message(embed=discord.Embed(title='⛔ Enhancement Level is Invalid',
+                                                                        description='Acceptable Inputs:\n`Base, PRI, DUO, TRI, TET, PEN`',
+                                                                        color=0xfe9a9a))
+            await asyncio.sleep(7)
+            await interaction.delete_original_response()
+            return # Stops execution if e_level is not matched to DB
+            
         # Disables the 'Create a Queue Alert' Button on Modal submit
         _alertMenuButton.disabled = True
         await _alertMenuID.edit(view=_alertMenuView)
 
-        # Match input itemName from model to a BDO Item Name
-        list = findItems(str(self.itemName))
+        # Match input itemName from model to a BDO Item Name 
+        list = await findItems(str(self.itemName), await database().get_items_from_level(e_level[0][0]))
         
         # Making sure list stays within Discord limits
         if len(list) > 1 and len(list) < 25:
@@ -126,12 +153,13 @@ class itemModal(discord.ui.Modal, title="Test test test test"):
         # If returned items only has one match
         elif len(list) == 1:
             await interaction.response.send_message(embed = discord.Embed(title='Creating queue alert for:',
-                                description=f'`{str(self.itemGrade).upper()}:{list[0][0]}`',
-                                color=0xfe9a9a).set_thumbnail(url=f'https://cdn.arsha.io/icons/{list[0][1]}.png'), view=Confirmation(interaction.user))
+                                description=f'`{str(self.itemGrade).upper()}:{list[0][1]}`',
+                                color=0xfe9a9a).set_thumbnail(url=f'https://cdn.arsha.io/icons/{list[0][0]}.png'), view=Confirmation(interaction.user))
         else:
-            await interaction.response.send_message(embed=discord.Embed(title=f'No item or the list of possible items found with the name `{self.itemName}` is too long. Try to be more specific or check for typo', 
+            await interaction.response.send_message(embed=discord.Embed(title=f'No queue-able item found with the name `{self.itemName}` and Enhancement Level `{self.itemGrade}`. Try to be more specific or check for typo.',
+                                                                        description= '**Make sure to:**\n -Include apostrophe `\'`\n-Make sure the Item is expensive enough to be listed on the registration queue. ', 
                                                                         color=0xfe9a9a))
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
             await interaction.delete_original_response()
             
             # For re-enabling Create a Queue Button

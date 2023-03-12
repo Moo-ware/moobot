@@ -2,7 +2,6 @@ import datetime
 import json
 import requests
 from pytz import timezone
-import csv
 from fuzzywuzzy import fuzz
 
 eastern = timezone('US/Eastern')
@@ -89,12 +88,6 @@ spawnTimes = {
 }
 
 dayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-data = []
-with open('resources/itemID.csv') as itemid:
-    reader = csv.reader(itemid)
-        
-    for row in reader:
-        data.append(row)
 
 
 def spawnFromNow():
@@ -226,10 +219,10 @@ def getBossIcon(b):
     if b == 'Qui':
         return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330760189812857/Muraka-modified.png'
 
-def findItems(item):
+async def findItems(item, data):
     found_list = []
     for names in data:
-        if fuzz.partial_ratio(item.capitalize(), names[0]) >= 85:
+        if fuzz.partial_ratio(item.capitalize(), names[1]) >= 75:
             found_list.append(names)
     return found_list
 
