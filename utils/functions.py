@@ -117,7 +117,7 @@ def spawnFromNow():
         return spawnList
   
 
-def GetWaitlist():
+async def GetWaitlist():
     url = 'https://na-trade.naeu.playblackdesert.com/Home/GetWorldMarketWaitList'
     headers = {
     "Content-Type": "application/json",
@@ -128,10 +128,11 @@ def GetWaitlist():
     response = requests.request('POST', url, json=payload, headers=headers)
     
     x = json.loads(response.text)
-    return x
+    list = []
+    for i in x["_waitList"]: list.append([i['mainKey'], i['name'], i['chooseKey'], i['_waitEndTime'], i['_pricePerOne']])
+    return list
 
-
-def matchEnhancement(key):
+async def matchEnhancement(key):
     return eLevel.get(key)
 
 
@@ -219,11 +220,20 @@ def getBossIcon(b):
     if b == 'Qui':
         return 'https://cdn.discordapp.com/attachments/629036668531507222/1079330760189812857/Muraka-modified.png'
 
+
 async def findItems(item, data):
     found_list = []
     for names in data:
-        if fuzz.partial_ratio(item.capitalize(), names[1]) >= 75:
+        if fuzz.partial_ratio(item.lower(), names[1].lower()) >= 85:
             found_list.append(names)
+    
+    if len(found_list) > 20 or len(found_list) == 0:
+        improved_list=[]
+        for names in found_list:
+            if fuzz.token_set_ratio(item.lower(), names[1].lower()) >= 90:
+                improved_list.append(names)
+        return improved_list
+    
     return found_list
 
 

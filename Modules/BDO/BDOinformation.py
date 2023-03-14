@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 from utils.functions import *
-from utils.marketwatcher import mpwatcher
+#######FIX from utils.marketwatcher import mpwatcher
 
 class BDOInfo(commands.Cog):
     def __init__(self, bot):
@@ -9,7 +9,7 @@ class BDOInfo(commands.Cog):
 
     @commands.command(name = 'queue', aliases = ['q'])
     async def queue(self, ctx):
-        waitList = mpwatcher.queue
+        waitList = [] ####### FIX -> mpwatcher.queue
         embed=discord.Embed(title="In Registrations Queue:", url="https://na-trade.naeu.playblackdesert.com/Home/list/wait", color=0xfe9a9a)
         embed.set_author(name="Central Market [NA]")
         if len(waitList["_waitList"]) != 0:
@@ -36,10 +36,6 @@ class BDOInfo(commands.Cog):
                         newstring = '{0:25}{1}\n'.format(i[1], i[0])
                         description = description + newstring
             
-                    elif int(i[0][:-3]) == 1:
-                        timestr = 'In {} hr and {} min'.format(i[0][:-3], i[0][-2:])
-                        newstring = '{0:25}{1}\n'.format(i[1], timestr)
-                        description = description + newstring
                     else:
                         timestr = 'In {} hr and {} min'.format(i[0][:-3], i[0][-2:])
                         newstring = '{0:25}{1}\n'.format(i[1], timestr)
@@ -47,19 +43,14 @@ class BDOInfo(commands.Cog):
                     
                 # len(i) == 3 means the times are from the next day
                 elif len(i) == 3:
-                    if int(i[0][8:-3]) == 1:
-                        timestr = 'In {} hr and {} min'.format(i[0][8:-3], i[0][-2:])
-                        newstring = '{0:25}{1}\n'.format(i[1], timestr)
-                        description = description + newstring
-                    else:
-                        timestr = 'In {} hr and {} min'.format(i[0][8:-3], i[0][-2:])
-                        newstring = '{0:25}{1}\n'.format(i[1], timestr)
-                        description = description + newstring
+                    timestr = 'In {} hr and {} min'.format(i[0][8:-3], i[0][-2:])
+                    newstring = '{0:25}{1}\n'.format(i[1], timestr)
+                    description = description + newstring
                     
                 else:
                     print('Error')
             
-            embed=discord.Embed(title="Upcoming Bosses:", description='```diff\n-{}\n```'.format(description), color=0xfe9a9a)
+            embed=discord.Embed(title="Upcoming Bosses:", description=f'```diff\n-{description}\n```', color=0xfe9a9a)
             embed.add_field(name="❗Important  Spawns :", 
                             value="```ansi\n\u001b[1;31mGarmoth      {}\u001b[0m```\n```yaml\nVell         {}```".format(timeFromNow(findNextBoss('Garmoth')),timeFromNow(findNextBoss('Vell'))), 
                             inline=False)
