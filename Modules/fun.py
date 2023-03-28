@@ -34,17 +34,39 @@ class fun(commands.Cog):
         if body is not None:
             openai.api_key = f"{openaikey}"
             response = await openai.Completion.acreate(
-                model="text-davinci-003", 
+                model="gpt-4", 
                 prompt="{}".format(body), 
                 temperature= float(temp), 
-                max_tokens=1000)
+                max_tokens=2000)
 
             responseFormat = response.choices[0].text
             
-            await ctx.send('```\n{}```'.format(responseFormat))
+            await ctx.send(f'{responseFormat}')
         else:
             await ctx.send('Please provide information')
 
+    
+    @commands.command(name = 'image', aliases = ['img'])
+    async def image(self, ctx, *, body = None):
+        if body is None:
+            await ctx.send('Please provide information')
+            return
+        
+        openai.api_key = f"{openaikey}"
+        try:
+            response = await openai.Image.acreate(
+                prompt=f"{body}",
+                n=1,
+                size="1024x1024"
+            )
+        except openai.error.InvalidRequestError:
+            await ctx.send('Prompt violates safety restrictions.')
+            return
+        else:
+            link = response["data"][0]["url"]
+            embed=discord.Embed(title=body, color=0x00ff00).set_footer(text="Powered by OpenAI DALL-E")
+            embed.set_image(url=link)
+            await ctx.send(embed=embed)
     
     # Slash Commands
 

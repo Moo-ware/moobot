@@ -66,6 +66,42 @@ class Utilities(commands.Cog):
         embed.set_footer(text=footer)
         embed.set_image(url=image)
         await interaction.response.send_message(embed=embed)
+    
+    @commands.command(name='says')
+    async def says(self, ctx):
+        await ctx.send("Once upon a time there was Princess Peach, who loved nothing more than to please Bowser. He was quite the fierce beast and she often took her time in trying to please him. Her favorite pastime was to tease him and give his big fat cock a little extra loving.\
+Bowser would often lie on the ground, ready to receive all the attention she gave him. She'd start off with a slow massage before caressing him with her gloved hands. She'd carefully move them up and down along his big fat cock, massaging it in a slow and steady motion.\
+Her next move was to take off her gloves and take Bowser's big fat cock in her mouth. She'd slide along it, eagerly exploring every single inch of him. She'd tease him with her tongue and lips, making sure to not move too quickly.\
+She'd move up and down in a pleasing rhythm, stopping for a moment as if to savor the moment. He'd moan with delight at the pleasure of it all and she wouldn't stop until he was thoroughly satisfied. After giving Bowser his fill of pleasure, she'd look up at him with a satisfied smile.\
+Bowser would take her in his arms and shower her with kisses while they both basked in the afterglow\
+The Box-Cox transformation is typically applied to the response variable to stabilize the variace and make the distribution more normal. This can help in meeting the assumptions of linear regression, such as homoscedasticity and normality of errors. However, the Box-Cox transformation can also be applied to the predictors if they exhibit non-normality or non-linearity, which might affect the model's performance.\
+Here's a summary of when to apply the Box-Cox transformation:\
+Response variable: If the assumptions of constant variance (homoscedasticity) and normality of errors are not met, you can apply the Box-Cox transformation to the response variable. This can help stabilize the variance and make the distribution of the residuals more normal.\
+Predictors: If one or more predictors have a non-normal distribution or exhibit non-linear relationships with the response variable, you can apply the Box-Cox transformation to those predictors. This can help improve the linearity of the relationship between the predictors and the response, which can lead to better model performance.\
+In both cases, remember to apply the inverse of the Box-Cox transformation to the predictions when interpreting the results, especially when transforming the response variable.\
+Once upon a time there was Princess Peach, who loved nothing more than to please Bowser. He was quite the fierce beast and she often took her time in trying to please him. Her favorite pastime was to tease him and give his big fat cock a little extra loving.\
+Bowser would often lie on the ground, ready to receive all the attention she gave him. She'd start off with a slow massage before caressing him with her gloved hands. She'd carefully move them up and down along his big fat cock, massaging it in a slow and steady motion.\
+Her next move was to take off her gloves and take Bowser's big fat cock in her mouth. She'd slide along it, eagerly exploring every single inch of him. She'd tease him with her tongue and lips, making sure to not move too quickly.\
+She'd move up and down in a pleasing rhythm, stopping for a moment as if to savor the moment. He'd moan with delight at the pleasure of it all and she wouldn't stop until he was thoroughly satisfied. After giving Bowser his fill of pleasure, she'd look up at him with a satisfied smile.\
+Bowser would take her in his arms and shower her with kisses while they both basked in the afterglow.\
+The Box-Cox transformation is typically applied to the response variable to stabilize the variance and make the distribution more normal. This can help in meeting the assumptions of linear regression, such as homoscedasticity and normality of errors. However, the Box-Cox transformation can also be applied to the predictors if they exhibit non-normality or non-linearity, which might affect the model's performance.\
+Here's a summary of when to apply the Box-Cox transformation:\
+Response variable: If the assumptions of constant variance (homoscedasticity) and normality of errors are not met, you can apply the Box-Cox transformation to the response variable. This can help stabilize the variance and make the distribution of the residuals more normal.\
+Predictors: If one or more predictors have a non-normal distribution or exhibit non-linear relationships with the response variable, you can apply the Box-Cox transformation to those predictors. This can help improve the linearity of the relationship between the predictors and the response, which can lead to better model performance.\
+In both cases, remember to apply the inverse of the Box-Cox transformation to the predictions when interpreting the results, especially when transforming the response variable.\
+Once upon a time there was Princess Peach, who loved nothing more than to please Bowser. He was quite the fierce beast and she often took her time in trying to please him. Her favorite pastime was to tease him and give his big fat cock a little extra loving.\
+Bowser would often lie on the ground, ready to receive all the attention she gave him. She'd start off with a slow massage before caressing him with her gloved hands. She'd carefully move them up and down along his big fat cock, massaging it in a slow and steady motion.\
+Her next move was to take off her gloves and take Bowser's big fat cock in her mouth. She'd slide along it, eagerly exploring every single inch of him. She'd tease him with her tongue and lips, making sure to not move too quickly.\
+She'd move up and down in a pleasing rhythm, stopping for a moment as if to savor the moment. He'd moan with delight at the pleasure of it all and she wouldn't stop until he was thoroughly satisfied. After giving Bowser his fill of pleasure, she'd look up at him with a satisfied smile.\
+Bowser would take her in his arms and shower her with kisses while they both basked in the afterglow.\
+The Box-Cox transformation is typically applied to the response variable to stabilize the variance and make the distribution more normal. This can help in meeting the assumptions of linear regression, such as homoscedasticity and normality of errors. However, the Box-Cox transformation can also be applied to the predictors if they exhibit non-normality or non-linearity, which might affect the model's performance.\
+Here's a summary of when to apply the Box-Cox transformation\
+Response variable: If the assumptions of constant variance (homoscedasticity) and normality of errors are not met, you can apply the Box-Cox transformation to the response variable. This can help stabilize the variance and make the distribution of the residuals more normal.\
+Predictors: If one or more predictors have a non-normal distribution or exhibit non-linear relationships with the response variable, you can apply the Box-Cox transformation to those predictors. This can help improve the linearity of the relationship between the predictors and the response, which can lead to better model performance.\
+In both cases, remember to apply the inverse of the Box-Cox transformation to the predictions when interpreting the results, especially when transforming the response variable.\
+Once upon a time there was Princess Peach, who loved nothing more than to please Bowser. He was quite the fierce beast and she often took her time in trying to please him. Her favorite pastime was to tease him and give his big fat cock a little extra loving.\
+Bowser would often lie on the ground, ready to receive all the attention she gave him. She'd start off with a slow massage before caressing him with her gloved hands. She'd carefully move them up and down along his big fat cock, massaging it in a slow and steady motion.")
+
 
 async def setup(bot):
     await bot.add_cog(Utilities(bot), guild=discord.Object(id=561610616360534044))
