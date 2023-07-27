@@ -2,6 +2,7 @@ import discord
 import asyncio
 import sqlite3
 from discord import app_commands
+from datetime import datetime
 from discord.ext import tasks, commands
 from utils.functions import findItems, GetWaitlist, matchEnhancement
 
@@ -11,10 +12,11 @@ last_waitlist = [] # Stores the last waitlist processed
 class marketalert(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.check_waitlist.start()
+        # self.check_waitlist.start()
     
     def cog_unload(self):
-        self.check_waitlist.cancel()
+        pass # Delte this when enabling the task below
+        # self.check_waitlist.cancel()
         
     @app_commands.command(name='alert', description='Brings up my alert menu') # Create a slash command
     async def alertmenu(self, interaction: discord.Interaction):
@@ -23,7 +25,9 @@ class marketalert(commands.Cog):
         await interaction.response.send_message(embed=await CreateAlertMenu(interaction.user, userInfo).create_alertmenu_embed(), view=view) # Send a message with our View class that contains the button
         view.message = await interaction.original_response() # Sets the current message as view.message
 
-    @tasks.loop(seconds=25)
+    
+    # disabled for now
+    """@tasks.loop(seconds=25)
     async def check_waitlist(self):
         global last_waitlist
         channel = self.bot.get_channel(596779920445800456)
@@ -34,7 +38,7 @@ class marketalert(commands.Cog):
         await DM(list_for_db).send_dm(user_id_todm, self.bot)
         
         
-        last_waitlist = current_list # sets the last to current after sending out alerts
+        last_waitlist = current_list # sets the last to current after sending out alerts"""
         
 async def setup(bot):
     await bot.add_cog(marketalert(bot), guild=discord.Object(id=1008234755638173776))

@@ -1,0 +1,6 @@
+openai
+discord
+owoify
+pytz
+fuzzywuzzy
+
