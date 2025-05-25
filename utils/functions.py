@@ -15,6 +15,7 @@ eLevel = {
   20 : "PEN",
 }
 
+# Subject to change over time
 spawnTimes = {
     'Monday' : {
         '0115' : 'Kutum & Karanda',

@@ -12,7 +12,8 @@ last_waitlist = [] # Stores the last waitlist processed
 class marketalert(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # self.check_waitlist.start()
+        # Enable Below when ready to start the bot
+        # self.check_waitlist.start() 
     
     def cog_unload(self):
         pass # Delte this when enabling the task below
@@ -26,7 +27,7 @@ class marketalert(commands.Cog):
         view.message = await interaction.original_response() # Sets the current message as view.message
 
     
-    # disabled for now
+    # disabled for now. (Main loop for checking waitlist)
     """@tasks.loop(seconds=25)
     async def check_waitlist(self):
         global last_waitlist

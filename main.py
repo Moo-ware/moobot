@@ -28,6 +28,7 @@ f = open('resources/apikey.json')
 data = json.load(f)
 bot_token = data.get('token')
 
+# Runs the bot through discord
 client.run(bot_token)
 
 
